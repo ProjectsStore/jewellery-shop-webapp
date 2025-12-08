@@ -30,6 +30,13 @@
         }
     </script>
     <style>
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
         .carousel-container {
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
@@ -92,13 +99,47 @@
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:inline"></i>
                     </button>
-                    <button class="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <button  id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-800 shadow-lg z-50 md:hidden">
+        <div class="p-4">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-xl font-bold text-primary-600 dark:text-primary-400">Menu</span>
+                <button id="close-menu" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="space-y-4">
+                <a href="#" class="block font-medium hover:text-primary-600 dark:hover:text-primary-400 transition py-2">Home</a>
+                
+                <div class="space-y-2">
+                    <button class="w-full text-left font-medium hover:text-primary-600 dark:hover:text-primary-400 transition flex items-center justify-between py-2 mobile-dropdown-toggle">
+                        Products <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="mobile-dropdown hidden pl-4 space-y-2">
+                        <a href="#gold" class="block hover:text-primary-600 dark:hover:text-primary-400 transition py-1">Gold</a>
+                        <a href="#silver" class="block hover:text-primary-600 dark:hover:text-primary-400 transition py-1">Silver</a>
+                        <a href="#mala" class="block hover:text-primary-600 dark:hover:text-primary-400 transition py-1">Mala/Moti</a>
+                        <a href="#pital" class="block hover:text-primary-600 dark:hover:text-primary-400 transition py-1">Pital</a>
+                    </div>
+                </div>
+                
+                <a href="#services" class="block font-medium hover:text-primary-600 dark:hover:text-primary-400 transition py-2">Services</a>
+                <a href="#contact" class="block font-medium hover:text-primary-600 dark:hover:text-primary-400 transition py-2">Contact Us</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile menu -->
+    <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
 
     <!-- Main Content -->
     <main>
@@ -561,6 +602,43 @@
         
         // Carousel functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const closeMenu = document.getElementById('close-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            const mobileDropdownToggle = document.querySelector('.mobile-dropdown-toggle');
+            const mobileDropdown = document.querySelector('.mobile-dropdown');
+            
+            function openMobileMenu() {
+                mobileMenu.classList.add('active');
+                menuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('active');
+                menuOverlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+            
+            mobileMenuToggle.addEventListener('click', openMobileMenu);
+            closeMenu.addEventListener('click', closeMobileMenu);
+            menuOverlay.addEventListener('click', closeMobileMenu);
+
+            // Mobile dropdown toggle
+            mobileDropdownToggle.addEventListener('click', () => {
+                mobileDropdown.classList.toggle('hidden');
+                const icon = mobileDropdownToggle.querySelector('i');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', closeMobileMenu);
+            });
+
             const carousel = document.getElementById('carousel');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
